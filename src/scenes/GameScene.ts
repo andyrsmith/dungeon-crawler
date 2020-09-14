@@ -1,5 +1,7 @@
 import Phaser from 'phaser'
 import TextureKeys from '../consts/TextureKeys'
+import {createFauneAnims} from '../anims/CharacterAnims'
+import AnimsKeys from '../consts/AnimsKeys'
 
 export default class GameScene extends Phaser.Scene {
   private faune!: Phaser.Physics.Arcade.Sprite
@@ -18,68 +20,10 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
 
+    createFauneAnims(this.anims)
     //Refactor: move into seperate file
     //Refactor: create anims const
-    this.anims.create({
-      key: 'faune-run-side',
-      frames: this.anims.generateFrameNames(TextureKeys.Faune, {
-        start: 1,
-        end: 8,
-        prefix: 'run-side-',
-        suffix: '.png'
-      }),
-      frameRate: 15,
-      repeat: -1 
-    })
-
-    this.anims.create({
-      key: 'faune-run-up',
-      frames: this.anims.generateFrameNames(TextureKeys.Faune, {
-        start: 1,
-        end: 8,
-        prefix: 'run-up-',
-        suffix: '.png'
-      }),
-      frameRate: 15,
-      repeat: -1
-    })
-
-    this.anims.create({
-      key: 'faune-run-down',
-      frames: this.anims.generateFrameNames(TextureKeys.Faune, {
-        start: 1,
-        end: 8,
-        prefix: 'run-down-',
-        suffix: '.png'
-      }),
-      frameRate: 15,
-      repeat: -1
-    })
-
-    this.anims.create({
-      key: 'faune-idle-side',
-      frames: [{
-        key: TextureKeys.Faune,
-        frame: 'walk-side-3.png'
-      }]
-    })
-
-    this.anims.create({
-      key: 'faune-idle-up',
-      frames: [{
-        key: TextureKeys.Faune,
-        frame: 'walk-up-3.png'
-      }]
-    })
-
-    this.anims.create({
-      key: 'faune-idle-down',
-      frames: [{
-        key: TextureKeys.Faune,
-        frame: 'walk-down-3.png'
-      }]
-    })
-
+ 
     const map = this.make.tilemap({
       key: TextureKeys.Dungeon
     })
@@ -111,19 +55,19 @@ export default class GameScene extends Phaser.Scene {
 
     if(this.cursors.left?.isDown) {
       this.faune.scaleX = -1
-      this.faune.play('faune-run-side', true)
+      this.faune.play(AnimsKeys.FauneRunSide, true)
       this.faune.body.offset.x = 24
       this.faune.setVelocity(-characterSpeed, 0)
     } else if (this.cursors.right?.isDown) {
       this.faune.scaleX = 1
-      this.faune.play('faune-run-side', true)
+      this.faune.play(AnimsKeys.FauneRunSide, true)
       this.faune.body.offset.x = 8
       this.faune.setVelocity(characterSpeed, 0) 
     } else if (this.cursors.down?.isDown) {
-      this.faune.play('faune-run-down', true)
+      this.faune.play(AnimsKeys.FauneRunDown, true)
       this.faune.setVelocity(0, characterSpeed)
     } else if (this.cursors.up?.isDown) {
-      this.faune.play('faune-run-up', true)
+      this.faune.play(AnimsKeys.FauneRunUp, true)
       this.faune.setVelocity(0, -characterSpeed)
     } else {
       const parts = this.faune.anims.currentAnim.key.split('-')
