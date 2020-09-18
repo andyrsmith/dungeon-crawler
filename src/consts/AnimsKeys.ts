@@ -4,7 +4,9 @@ enum AnimsKeys {
   FauneIdleDown = 'faune-idle-down',
   FauneRunSide = 'faune-run-side',
   FauneRunUp = 'faune-run-up',
-  FauneRunDown = 'faune-run-down'
+  FauneRunDown = 'faune-run-down',
+  LizardIdle = 'lizard-idle',
+  LizardRun = 'lizard-run'
 }
 
 export default AnimsKeys

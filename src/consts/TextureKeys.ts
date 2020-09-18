@@ -3,7 +3,8 @@ enum TextureKeys {
   DungeonTiles = 'dungeon-tiles',
   Faune = 'faune',
   WallsLayer = 'Walls',
-  GroundLayer = 'Ground'
+  GroundLayer = 'Ground',
+  Lizard = 'lizard'
 }
 
 export default TextureKeys

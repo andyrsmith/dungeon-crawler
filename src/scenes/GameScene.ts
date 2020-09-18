@@ -1,9 +1,10 @@
 import Phaser from 'phaser'
 import TextureKeys from '../consts/TextureKeys'
 import {createFauneAnims} from '../anims/CharacterAnims'
-import AnimsKeys from '../consts/AnimsKeys'
 import '../characters/Faune'
 import Faune from '../characters/Faune'
+import Lizard from '../enemies/Lizard'
+import {createEnemiesAnims} from '../anims/EnemiesAnims'
 
 
 export default class GameScene extends Phaser.Scene {
@@ -18,12 +19,14 @@ export default class GameScene extends Phaser.Scene {
     this.load.image(TextureKeys.DungeonTiles, 'images/dungeon/dungeon_tiles_extruded.png')
     this.load.tilemapTiledJSON(TextureKeys.Dungeon, 'images/dungeon/dungeon-01.json')
     this.load.atlas(TextureKeys.Faune, 'images/characters/faune.png', 'images/characters/faune.json')
+    this.load.atlas(TextureKeys.Lizard, 'images/enemies/lizard.png', 'images/enemies/lizard.json')
 
   }
 
   create() {
 
     createFauneAnims(this.anims)
+    createEnemiesAnims(this.anims)
  
     const map = this.make.tilemap({
       key: TextureKeys.Dungeon
@@ -38,7 +41,17 @@ export default class GameScene extends Phaser.Scene {
     this.faune = this.add.faune(100, 50, TextureKeys.Faune)
     this.cameras.main.startFollow(this.faune)
 
+    //this.physics.add.sprite(100, 80, TextureKeys.Lizard, 'lizard_m_idle_anim_f0.png')
+    //const lizard = this.physics.add.existing(new Lizard (this, 100, 80, TextureKeys.Lizard, 'lizard_m_idle_anim_f0.png'))
+    //this.physics.world.enable([ lizard ]);
+    const lizards = this.physics.add.group({
+      classType: Lizard
+    })
+
+    lizards.get(250, 80, TextureKeys.Lizard, 'lizard_m_idle_anim_f0.png')
+
     this.physics.add.collider(this.faune, wallsLayer)
+    this.physics.add.collider(lizards, wallsLayer)
 
     this.cursors = this.input.keyboard.createCursorKeys()
   }
