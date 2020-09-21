@@ -45,7 +45,11 @@ export default class GameScene extends Phaser.Scene {
     //const lizard = this.physics.add.existing(new Lizard (this, 100, 80, TextureKeys.Lizard, 'lizard_m_idle_anim_f0.png'))
     //this.physics.world.enable([ lizard ]);
     const lizards = this.physics.add.group({
-      classType: Lizard
+      classType: Lizard,
+      createCallback: (go) => {
+        const lizGo = go as Lizard
+        lizGo.body.onCollide = true
+      }
     })
 
     lizards.get(250, 80, TextureKeys.Lizard, 'lizard_m_idle_anim_f0.png')
