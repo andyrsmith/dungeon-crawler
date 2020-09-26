@@ -38,7 +38,6 @@ export default class Lizard extends Phaser.Physics.Arcade.Sprite {
   }
 
   private handleTileCollision(go: Phaser.GameObjects.GameObject, tile: Phaser.Tilemaps.Tile) {
-    console.log('on wall')
 
     if(go !== this) {
       return

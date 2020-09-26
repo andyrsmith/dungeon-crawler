@@ -10,6 +10,7 @@ import {createEnemiesAnims} from '../anims/EnemiesAnims'
 export default class GameScene extends Phaser.Scene {
   private faune!: Faune
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
+  private hit = 0
 
   constructor() {
     super('game')
@@ -49,6 +50,8 @@ export default class GameScene extends Phaser.Scene {
       createCallback: (go) => {
         const lizGo = go as Lizard
         lizGo.body.onCollide = true
+        lizGo.body.setSize(lizGo.width, lizGo.height * 0.6)
+        lizGo.body.offset.y = lizGo.y * 0.15
       }
     })
 
@@ -56,13 +59,37 @@ export default class GameScene extends Phaser.Scene {
 
     this.physics.add.collider(this.faune, wallsLayer)
     this.physics.add.collider(lizards, wallsLayer)
+    this.physics.add.collider(this.faune, lizards, this.fauneLizardCollusion, undefined, this)
 
     this.cursors = this.input.keyboard.createCursorKeys()
   }
 
   update(t: number, dt: number) {
+    if(this.hit > 0) {
+      ++this.hit
+      if(this.hit > 10) {
+        this.hit = 0
+      }
+      return
+    }
+    
     if(this.faune) {
       this.faune.update(this.cursors)
     }
+  }
+  
+  fauneLizardCollusion(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
+    const lizard = obj2 as Lizard
+
+    const dx = this.faune.x - lizard.x
+    const dy = this.faune.y - lizard.y
+
+    const dir = new Phaser.Math.Vector2(dx, dy).normalize().scale(200)
+
+    this.faune.setVelocity(dir.x, dir.y)
+
+    this.hit = 1
+
+
   }
 }
