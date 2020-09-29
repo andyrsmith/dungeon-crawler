@@ -4,7 +4,9 @@ enum TextureKeys {
   Faune = 'faune',
   WallsLayer = 'Walls',
   GroundLayer = 'Ground',
-  Lizard = 'lizard'
+  Lizard = 'lizard',
+  FullHeart = 'full-heart',
+  EmptyHeart = 'empty-heart'
 }
 
 export default TextureKeys

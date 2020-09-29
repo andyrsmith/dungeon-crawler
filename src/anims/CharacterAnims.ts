@@ -63,6 +63,18 @@ const createFauneAnims = (anims: Phaser.Animations.AnimationManager) => {
     }]
   })
 
+  anims.create({
+    key: AnimsKeys.FauneFaint,
+    frames: anims.generateFrameNames(TextureKeys.Faune, {
+      start: 1,
+      end: 4,
+      prefix: 'faint-',
+      suffix: '.png'
+    }),
+    frameRate: 15,
+    repeat: 0
+  })
+
 }
 
 export {

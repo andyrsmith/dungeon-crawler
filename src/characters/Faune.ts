@@ -1,6 +1,12 @@
 import Phaser from 'phaser'
 import AnimsKeys from '../consts/AnimsKeys'
 
+enum HealthState {
+  IDLE,
+  DAMAGE,
+  DEAD
+}
+
 declare global {
   namespace Phaser.GameObjects {
     interface GameObjectFactory {
@@ -10,6 +16,11 @@ declare global {
 }
 
 export default class Faune extends Phaser.Physics.Arcade.Sprite {
+  private hit = 0
+  private _health = 3
+  private healtState = HealthState.IDLE
+  private damageTime = 0
+
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture, frame)
 
@@ -17,8 +28,33 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
 
   }
 
+  get Health() {
+    return this._health
+  }
+
+  preUpdate(t: number, dt: number) {
+    super.preUpdate(t, dt)
+
+    switch (this.healtState) {
+      case HealthState.IDLE: 
+        break
+      case HealthState.DAMAGE:
+        this.damageTime += dt
+        if(this.damageTime > 250) {
+          this.healtState = HealthState.IDLE
+          this.setTint(0xffffff)
+          this.damageTime = 0
+        }
+        break
+    }
+  }
+
   update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
     if(!cursors) {
+      return
+    }
+
+    if(this.healtState === HealthState.DAMAGE || this.healtState === HealthState.DEAD) {
       return
     }
 
@@ -44,6 +80,25 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       const parts = this.anims.currentAnim.key.split('-')
       this.play(`faune-idle-${parts[2]}`)
       this.setVelocity(0, 0)
+    }
+  }
+
+  handleDamage(dir: Phaser.Math.Vector2) {
+
+    if(this.healtState === HealthState.DAMAGE) {
+      return
+    }
+
+    this._health--
+
+    if(this.Health <= 0) {
+      this.healtState = HealthState.DEAD
+      this.play(AnimsKeys.FauneFaint)
+      this.setVelocity(0, 0)
+    } else {
+      this.healtState = HealthState.DAMAGE
+      this.setVelocity(dir.x, dir.y)
+      this.setTint(0xff0000)
     }
   }
 }

@@ -5,12 +5,14 @@ import '../characters/Faune'
 import Faune from '../characters/Faune'
 import Lizard from '../enemies/Lizard'
 import {createEnemiesAnims} from '../anims/EnemiesAnims'
+import EventKeys from '../consts/EventKeys'
+import { sceneEvents } from '../events/EventCenter'
 
 
 export default class GameScene extends Phaser.Scene {
   private faune!: Faune
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
-  private hit = 0
+  private fauneLizardCollider!: Phaser.Physics.Arcade.Collider 
 
   constructor() {
     super('game')
@@ -21,11 +23,12 @@ export default class GameScene extends Phaser.Scene {
     this.load.tilemapTiledJSON(TextureKeys.Dungeon, 'images/dungeon/dungeon-01.json')
     this.load.atlas(TextureKeys.Faune, 'images/characters/faune.png', 'images/characters/faune.json')
     this.load.atlas(TextureKeys.Lizard, 'images/enemies/lizard.png', 'images/enemies/lizard.json')
-
+    this.load.image(TextureKeys.FullHeart, 'images/ui/ui_heart_full.png')
+    this.load.image(TextureKeys.EmptyHeart, 'images/ui/ui_heart_empty.png')
   }
 
   create() {
-
+    this.scene.run('game-ui')
     createFauneAnims(this.anims)
     createEnemiesAnims(this.anims)
  
@@ -59,20 +62,12 @@ export default class GameScene extends Phaser.Scene {
 
     this.physics.add.collider(this.faune, wallsLayer)
     this.physics.add.collider(lizards, wallsLayer)
-    this.physics.add.collider(this.faune, lizards, this.fauneLizardCollusion, undefined, this)
+    this.fauneLizardCollider = this.physics.add.collider(this.faune, lizards, this.fauneLizardCollusion, undefined, this)
 
     this.cursors = this.input.keyboard.createCursorKeys()
   }
 
-  update(t: number, dt: number) {
-    if(this.hit > 0) {
-      ++this.hit
-      if(this.hit > 10) {
-        this.hit = 0
-      }
-      return
-    }
-    
+  update(t: number, dt: number) {    
     if(this.faune) {
       this.faune.update(this.cursors)
     }
@@ -86,10 +81,13 @@ export default class GameScene extends Phaser.Scene {
 
     const dir = new Phaser.Math.Vector2(dx, dy).normalize().scale(200)
 
-    this.faune.setVelocity(dir.x, dir.y)
+    this.faune.handleDamage(dir)
 
-    this.hit = 1
+    sceneEvents.emit(EventKeys.PlayerHealthChange, this.faune.Health)
 
+    if(this.faune.Health <= 0) {
+      this.fauneLizardCollider.destroy()
+    }
 
   }
 }
