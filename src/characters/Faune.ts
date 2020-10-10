@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import TextureKeys from '~/consts/TextureKeys'
 import AnimsKeys from '../consts/AnimsKeys'
 
 enum HealthState {
@@ -20,6 +21,8 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
   private _health = 3
   private healtState = HealthState.IDLE
   private damageTime = 0
+  private weapons!: Phaser.Physics.Arcade.Group
+  private attacking = false
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture, frame)
@@ -30,6 +33,15 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
 
   get Health() {
     return this._health
+  }
+
+  get Weapon( ) {
+    return this.weapons
+  }
+  //Is load the weapon ahead of time and make it appear when space
+  // or load the weapon when space bar is hit
+  setWeapon(weapons) {
+    this.weapons = weapons
   }
 
   preUpdate(t: number, dt: number) {
@@ -54,12 +66,15 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       return
     }
 
-    if(this.healtState === HealthState.DAMAGE || this.healtState === HealthState.DEAD) {
+    if(this.healtState === HealthState.DAMAGE || this.healtState === HealthState.DEAD || this.attacking) {
       return
     }
 
-    const characterSpeed = 100
+    if(Phaser.Input.Keyboard.JustDown(cursors.space!)) {
+      this.useWeapon()
+    }
 
+    const characterSpeed = 100
     if(cursors.left?.isDown) {
       this.scaleX = -1
       this.play(AnimsKeys.FauneRunSide, true)
@@ -71,6 +86,7 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       this.body.offset.x = 8
       this.setVelocity(characterSpeed, 0) 
     } else if (cursors.down?.isDown) {
+
       this.play(AnimsKeys.FauneRunDown, true)
       this.setVelocity(0, characterSpeed)
     } else if (cursors.up?.isDown) {
@@ -81,6 +97,51 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       this.play(`faune-idle-${parts[2]}`)
       this.setVelocity(0, 0)
     }
+  }
+
+  useWeapon() {
+
+    let weaponX = this.x;
+    let weaponY = this.y;
+    let angle = 0;
+
+    const parts = this.anims.currentAnim.key.split('-')
+    const direction = parts[2]
+    this.attacking = true
+    if(direction === 'up') {
+      weaponY = weaponY - this.body.height + 10
+    } else if (direction === 'side' && this.scaleX === -1) {
+      weaponX = weaponX - 10
+      weaponY = weaponY + 5
+      angle = 270
+    } else if (direction == 'side' && this.scaleX === 1) {
+      weaponX = weaponX + 10
+      weaponY = weaponY + 5
+      angle = 90
+    } else if(direction === 'down') {
+      weaponY = weaponY + this.body.height - 10
+      angle = 180
+    }
+
+    const weapon = this.weapons.get(weaponX, weaponY,  TextureKeys.RedGemSword) as Phaser.Physics.Arcade.Image;
+
+    weapon.setActive(true)
+    weapon.setVisible(true)
+    weapon.setAngle(angle)
+
+    // right side scaleX 1 90
+    // left side scaleX -1 180
+    // up up 0
+    // down  120
+
+    this.scene.time.addEvent({
+      delay: 100,
+      callback: () => {
+        this.weapons.killAndHide(weapon)
+        this.weapons.remove(weapon)
+        this.attacking = false
+      }
+    })
   }
 
   handleDamage(dir: Phaser.Math.Vector2) {
