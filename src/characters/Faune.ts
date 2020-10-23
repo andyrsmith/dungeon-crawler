@@ -71,7 +71,11 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
     }
 
     if(Phaser.Input.Keyboard.JustDown(cursors.space!)) {
+      const parts = this.anims.currentAnim.key.split('-')
+      this.play(`faune-idle-${parts[2]}`)
+      this.setVelocity(0, 0)
       this.useWeapon()
+      return
     }
 
     const characterSpeed = 100
@@ -86,7 +90,6 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       this.body.offset.x = 8
       this.setVelocity(characterSpeed, 0) 
     } else if (cursors.down?.isDown) {
-
       this.play(AnimsKeys.FauneRunDown, true)
       this.setVelocity(0, characterSpeed)
     } else if (cursors.up?.isDown) {
@@ -104,6 +107,8 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
     let weaponX = this.x;
     let weaponY = this.y;
     let angle = 0;
+    let heightMultipler = 1
+    let widthMultipler = 1
 
     const parts = this.anims.currentAnim.key.split('-')
     const direction = parts[2]
@@ -114,25 +119,25 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       weaponX = weaponX - 10
       weaponY = weaponY + 5
       angle = 270
+      heightMultipler = 0.5
+      widthMultipler = 1.5
     } else if (direction == 'side' && this.scaleX === 1) {
       weaponX = weaponX + 10
       weaponY = weaponY + 5
       angle = 90
+      heightMultipler = 0.5
+      widthMultipler = 1.5
     } else if(direction === 'down') {
       weaponY = weaponY + this.body.height - 10
       angle = 180
     }
 
     const weapon = this.weapons.get(weaponX, weaponY,  TextureKeys.RedGemSword) as Phaser.Physics.Arcade.Image;
+    weapon.body.setSize(weapon.width * widthMultipler, weapon.height * heightMultipler)
 
     weapon.setActive(true)
     weapon.setVisible(true)
     weapon.setAngle(angle)
-
-    // right side scaleX 1 90
-    // left side scaleX -1 180
-    // up up 0
-    // down  120
 
     this.scene.time.addEvent({
       delay: 100,
