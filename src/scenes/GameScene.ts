@@ -7,6 +7,7 @@ import Lizard from '../enemies/Lizard'
 import {createEnemiesAnims} from '../anims/EnemiesAnims'
 import EventKeys from '../consts/EventKeys'
 import { sceneEvents } from '../events/EventCenter'
+import SceneKeys from '../consts/SceneKeys'
 
 
 export default class GameScene extends Phaser.Scene {
@@ -17,17 +18,11 @@ export default class GameScene extends Phaser.Scene {
   private lizards!: Phaser.Physics.Arcade.Group
 
   constructor() {
-    super('game')
+    super(SceneKeys.game)
   }
 
   preload() {
-    this.load.image(TextureKeys.DungeonTiles, 'images/dungeon/dungeon_tiles_extruded.png')
-    this.load.tilemapTiledJSON(TextureKeys.Dungeon, 'images/dungeon/dungeon-01.json')
-    this.load.atlas(TextureKeys.Faune, 'images/characters/faune.png', 'images/characters/faune.json')
-    this.load.atlas(TextureKeys.Lizard, 'images/enemies/lizard.png', 'images/enemies/lizard.json')
-    this.load.image(TextureKeys.FullHeart, 'images/ui/ui_heart_full.png')
-    this.load.image(TextureKeys.EmptyHeart, 'images/ui/ui_heart_empty.png')
-    this.load.image(TextureKeys.RedGemSword, 'images/items/weapon_red_gem_sword.png')
+
   }
 
   create() {

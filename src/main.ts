@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 
 import GameScene from './scenes/GameScene'
 import GameUI from './scenes/GameUI'
+import PreloadScene from './scenes/PreloadScene'
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -11,10 +12,10 @@ const config: Phaser.Types.Core.GameConfig = {
     default: 'arcade',
     arcade: {
       gravity: { y: 0 },
-      debug: true
+      debug: false
     }
   },
-  scene: [GameScene, GameUI],
+  scene: [PreloadScene, GameScene, GameUI],
   scale: {
     zoom: 2
   }

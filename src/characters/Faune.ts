@@ -38,8 +38,7 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
   get Weapon( ) {
     return this.weapons
   }
-  //Is load the weapon ahead of time and make it appear when space
-  // or load the weapon when space bar is hit
+
   setWeapon(weapons) {
     this.weapons = weapons
   }
@@ -140,7 +139,7 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
     weapon.setAngle(angle)
 
     this.scene.time.addEvent({
-      delay: 100,
+      delay: 200,
       callback: () => {
         this.weapons.killAndHide(weapon)
         this.weapons.remove(weapon)

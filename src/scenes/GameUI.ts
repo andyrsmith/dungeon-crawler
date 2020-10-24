@@ -2,12 +2,13 @@ import Phaser from 'phaser'
 import TextureKeys from '~/consts/TextureKeys'
 import {sceneEvents} from '../events/EventCenter'
 import EventKeys from '../consts/EventKeys'
+import SceneKeys from '../consts/SceneKeys'
 
 export default class GameUI extends Phaser.Scene {
   private hearts!: Phaser.GameObjects.Group
 
   constructor() {
-    super({ key: 'game-ui'})
+    super({ key: SceneKeys.gameUI})
   }
 
   create() {
