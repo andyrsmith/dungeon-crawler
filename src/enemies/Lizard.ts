@@ -37,7 +37,7 @@ export default class Lizard extends Phaser.Physics.Arcade.Sprite {
     })
   }
 
-  private handleTileCollision(go: Phaser.GameObjects.GameObject, tile: Phaser.Tilemaps.Tile) {
+  handleTileCollision(go: Phaser.GameObjects.GameObject, tile: Phaser.Tilemaps.Tile) {
 
     if(go !== this) {
       return

@@ -6,9 +6,12 @@ import SceneKeys from '../consts/SceneKeys'
 
 export default class GameUI extends Phaser.Scene {
   private hearts!: Phaser.GameObjects.Group
+  private coins: number
+  private coinText!: Phaser.GameObjects.Text
 
   constructor() {
     super({ key: SceneKeys.gameUI})
+    this.coins = 0
   }
 
   create() {
@@ -25,12 +28,26 @@ export default class GameUI extends Phaser.Scene {
       },
       quantity: 3
     })
+    
+    this.coinText = this.add.text(355, 2, this.coins.toString(), {
+      fontSize: '20px'
+    })
+
+    const coin = this.add.image(385, 10, TextureKeys.Chest, 'coin_anim_f0.png')
+    coin.scale = 2
 
     sceneEvents.on(EventKeys.PlayerHealthChange, this.updateHearts, this)
+
+    sceneEvents.on(EventKeys.CoinValueChange, this.updateCoinValue, this)
 
     this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
       sceneEvents.off(EventKeys.PlayerHealthChange, this.updateHearts)
     })
+  }
+
+  updateCoinValue(coins: number) {
+    console.log(coins)
+    this.coinText.text = coins.toString()
   }
 
   updateHearts(health: number) {

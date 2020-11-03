@@ -1,6 +1,11 @@
 import Phaser from 'phaser'
-import TextureKeys from '~/consts/TextureKeys'
+import TextureKeys from '../consts/TextureKeys'
+import Chest from '~/items/Chest'
 import AnimsKeys from '../consts/AnimsKeys'
+import SceneKeys from '../consts/SceneKeys'
+import items from '../consts/ItemsKeys'
+import { sceneEvents } from '../events/EventCenter'
+import EventKeys from '../consts/EventKeys'
 
 enum HealthState {
   IDLE,
@@ -23,6 +28,8 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
   private damageTime = 0
   private weapons!: Phaser.Physics.Arcade.Group
   private attacking = false
+  private activeChest?: Chest
+  private coins = 0
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture, frame)
@@ -37,6 +44,14 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
 
   get Weapon( ) {
     return this.weapons
+  }
+
+  get ActiveChest() {
+    return this.activeChest
+  }
+
+  setActiveChest(chest: Chest) {
+    this.activeChest = chest
   }
 
   setWeapon(weapons) {
@@ -70,11 +85,18 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
     }
 
     if(Phaser.Input.Keyboard.JustDown(cursors.space!)) {
-      const parts = this.anims.currentAnim.key.split('-')
-      this.play(`faune-idle-${parts[2]}`)
-      this.setVelocity(0, 0)
-      this.useWeapon()
-      return
+      if(this.activeChest) {
+        const loot = this.activeChest.open()
+        this.collectLoot(loot)
+        console.log(loot)
+      } else {
+        const parts = this.anims.currentAnim.key.split('-')
+        this.play(`faune-idle-${parts[2]}`)
+        this.setVelocity(0, 0)
+        this.useWeapon()
+        return
+      }
+
     }
 
     const characterSpeed = 100
@@ -98,6 +120,18 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       const parts = this.anims.currentAnim.key.split('-')
       this.play(`faune-idle-${parts[2]}`)
       this.setVelocity(0, 0)
+    }
+
+    if(cursors.left?.isDown || cursors.right?.isDown || cursors.down?.isDown || cursors.up?.isDown) {
+      this.activeChest = undefined
+    }
+  }
+
+  collectLoot(loot) {
+    if(loot.itemName === items.coin) {
+      this.coins += loot.value
+      console.log('here')
+      sceneEvents.emit(EventKeys.CoinValueChange, this.coins)
     }
   }
 
@@ -160,6 +194,8 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       this.healtState = HealthState.DEAD
       this.play(AnimsKeys.FauneFaint)
       this.setVelocity(0, 0)
+      this.scene.cameras.main.fade(1000)
+      this.scene.scene.run(SceneKeys.gameOver)
     } else {
       this.healtState = HealthState.DAMAGE
       this.setVelocity(dir.x, dir.y)

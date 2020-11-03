@@ -8,6 +8,8 @@ import {createEnemiesAnims} from '../anims/EnemiesAnims'
 import EventKeys from '../consts/EventKeys'
 import { sceneEvents } from '../events/EventCenter'
 import SceneKeys from '../consts/SceneKeys'
+import Chest from '../items/Chest'
+import { createChestAnims } from '../anims/ChestAnims'
 
 
 export default class GameScene extends Phaser.Scene {
@@ -29,32 +31,29 @@ export default class GameScene extends Phaser.Scene {
     this.scene.run('game-ui')
     createFauneAnims(this.anims)
     createEnemiesAnims(this.anims)
+    createChestAnims(this.anims)
  
     const map = this.make.tilemap({
       key: TextureKeys.Dungeon
-    })
-  
+    })  
     const tileSet = map.addTilesetImage('dungeon', TextureKeys.DungeonTiles, 16, 16, 1, 2)
-
     map.createStaticLayer(TextureKeys.GroundLayer, tileSet)
     const wallsLayer = map.createStaticLayer(TextureKeys.WallsLayer, tileSet)
     wallsLayer.setCollisionByProperty({ collides: true})
 
-
     this.weapons = this.physics.add.group({
       classType: Phaser.Physics.Arcade.Image,
 
-    })
-    
+    })    
     this.faune = this.add.faune(100, 50, TextureKeys.Faune)
     this.faune.setDepth(1)
-    this.faune.setWeapon(this.weapons)
-     
+    this.faune.setWeapon(this.weapons)     
     this.cameras.main.startFollow(this.faune)
 
     //this.physics.add.sprite(100, 80, TextureKeys.Lizard, 'lizard_m_idle_anim_f0.png')
     //const lizard = this.physics.add.existing(new Lizard (this, 100, 80, TextureKeys.Lizard, 'lizard_m_idle_anim_f0.png'))
     //this.physics.world.enable([ lizard ]);
+
     this.lizards = this.physics.add.group({
       classType: Lizard,
       createCallback: (go) => {
@@ -64,12 +63,19 @@ export default class GameScene extends Phaser.Scene {
         lizGo.body.offset.y = lizGo.y * 0.15
       }
     })
-
     this.lizards.get(250, 80, TextureKeys.Lizard, 'lizard_m_idle_anim_f0.png')
+
+    const chests = this.physics.add.staticGroup({
+      classType: Chest
+    })
+    chests.get(250, 120, TextureKeys.Chest, 'chest_empty_open_anim_f0.png')
+
 
     this.physics.add.collider(this.faune, wallsLayer)
     this.physics.add.collider(this.lizards, wallsLayer)
-    this.physics.add.collider(this.weapons, this.lizards, this.weaponLizardCollusion, undefined, this)
+    this.physics.add.collider(this.lizards, chests)
+    this.physics.add.collider(this.faune.Weapon, this.lizards, this.weaponLizardCollusion, undefined, this)
+    this.physics.add.collider(chests, this.faune, this.handlePlayerChestCollusion, undefined, this)
     this.fauneLizardCollider = this.physics.add.collider(this.faune, this.lizards, this.fauneLizardCollusion, undefined, this)
 
     this.cursors = this.input.keyboard.createCursorKeys()
@@ -79,6 +85,11 @@ export default class GameScene extends Phaser.Scene {
     if(this.faune) {
       this.faune.update(this.cursors)
     }
+  }
+
+  handlePlayerChestCollusion(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
+    const chest = obj2 as Chest
+    this.faune.setActiveChest(chest)
   }
   
   fauneLizardCollusion(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {

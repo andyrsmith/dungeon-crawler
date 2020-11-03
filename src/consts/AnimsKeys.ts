@@ -7,7 +7,9 @@ enum AnimsKeys {
   FauneRunDown = 'faune-run-down',
   FauneFaint = 'faune-faint',
   LizardIdle = 'lizard-idle',
-  LizardRun = 'lizard-run'
+  LizardRun = 'lizard-run',
+  chestOpen = 'chest-open',
+  chestClose = 'chest-close'
 }
 
 export default AnimsKeys
