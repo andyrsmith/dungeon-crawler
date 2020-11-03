@@ -88,7 +88,6 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       if(this.activeChest) {
         const loot = this.activeChest.open()
         this.collectLoot(loot)
-        console.log(loot)
       } else {
         const parts = this.anims.currentAnim.key.split('-')
         this.play(`faune-idle-${parts[2]}`)
@@ -148,29 +147,24 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
     this.attacking = true
     if(direction === 'up') {
       weaponY = weaponY - this.body.height + 10
-    } else if (direction === 'side' && this.scaleX === -1) {
-      weaponX = weaponX - 10
-      weaponY = weaponY + 5
-      angle = 270
+    } else if (direction === 'side') {
       heightMultipler = 0.5
       widthMultipler = 1.5
-    } else if (direction == 'side' && this.scaleX === 1) {
-      weaponX = weaponX + 10
-      weaponY = weaponY + 5
-      angle = 90
-      heightMultipler = 0.5
-      widthMultipler = 1.5
+      if(this.scaleX === -1) {
+        weaponX = weaponX - 10
+        weaponY = weaponY + 5
+        angle = 270
+      } else {
+        weaponX = weaponX + 10
+        weaponY = weaponY + 5
+        angle = 90
+      }
     } else if(direction === 'down') {
       weaponY = weaponY + this.body.height - 10
       angle = 180
     }
 
-    const weapon = this.weapons.get(weaponX, weaponY,  TextureKeys.RedGemSword) as Phaser.Physics.Arcade.Image;
-    weapon.body.setSize(weapon.width * widthMultipler, weapon.height * heightMultipler)
-
-    weapon.setActive(true)
-    weapon.setVisible(true)
-    weapon.setAngle(angle)
+    const weapon = this.drawWeapon(weaponX, weaponY, widthMultipler, heightMultipler, angle)
 
     this.scene.time.addEvent({
       delay: 200,
@@ -181,6 +175,18 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       }
     })
   }
+
+  drawWeapon(x, y, widthMultipler, heightMultipler, angle) {
+    const weapon = this.weapons.get(x, y,  TextureKeys.RedGemSword) as Phaser.Physics.Arcade.Image;
+    weapon.body.setSize(weapon.width * widthMultipler, weapon.height * heightMultipler)
+
+    weapon.setActive(true)
+    weapon.setVisible(true)
+    weapon.setAngle(angle)
+
+    return weapon
+  }
+
 
   handleDamage(dir: Phaser.Math.Vector2) {
 
