@@ -21,6 +21,18 @@ const createChestAnims = (anims: Phaser.Animations.AnimationManager) => {
     repeat: 0,
     frameRate: 5
   })
+
+  anims.create({
+    key: AnimsKeys.coin,
+    frames: anims.generateFrameNames(TextureKeys.Chest, {
+      start: 0,
+      end: 3,
+      prefix: 'coin_anim_f',
+      suffix: '.png'
+    }),
+    frameRate: 15,
+    repeat: 0
+  })
 }
 
 export {
