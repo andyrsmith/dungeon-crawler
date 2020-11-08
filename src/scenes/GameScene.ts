@@ -112,8 +112,12 @@ export default class GameScene extends Phaser.Scene {
 
   weaponLizardCollusion(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
     const lizard = obj2 as Lizard
-    //lizard and weapon body do not destory
-    this.lizards.killAndHide(lizard)
-    this.lizards.remove(lizard)
+
+    const dx = this.faune.x - lizard.x
+    const dy = this.faune.y - lizard.y
+
+    const dir = new Phaser.Math.Vector2(dx, dy).normalize().scale(200)
+
+    lizard.handleDamage(dir)
   }
 }

@@ -8,6 +8,11 @@ enum Direction {
   RIGHT
 }
 
+enum HealthState {
+  IDLE,
+  DAMAGE
+}
+
 const randomDirection = (exclude: Direction) => {
   let newDirection = Phaser.Math.Between(0, 3)
   while(newDirection === exclude) {
@@ -20,6 +25,13 @@ const randomDirection = (exclude: Direction) => {
 export default class Lizard extends Phaser.Physics.Arcade.Sprite {
   private direction = Direction.RIGHT
   private moveEvent: Phaser.Time.TimerEvent
+  private healthState = HealthState.IDLE
+  private damageTime = 0
+  private health = 2
+
+  setHealthState(health: HealthState) {
+    this.healthState = health
+  }
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture, frame)
@@ -45,8 +57,33 @@ export default class Lizard extends Phaser.Physics.Arcade.Sprite {
     this.direction = randomDirection(this.direction)
   }
 
+  handleDamage(dir: Phaser.Math.Vector2) {
+    if(this.healthState !== HealthState.DAMAGE) {
+      this.health--
+    }
+    this.healthState = HealthState.DAMAGE
+    if(this.health <= 0) {
+      this.destroy()
+    }
+    this.setTint(0xff0000)
+  }
+
   preUpdate(t: number, dt: number) {
     super.preUpdate(t, dt)
+
+
+    switch (this.healthState) {
+      case HealthState.IDLE: 
+        break
+      case HealthState.DAMAGE:
+        this.damageTime += dt
+        if(this.damageTime > 500) {
+          this.healthState = HealthState.IDLE
+          this.setTint(0xffffff)
+          this.damageTime = 0
+        }
+        break
+    }
 
     const speed = 50
 
