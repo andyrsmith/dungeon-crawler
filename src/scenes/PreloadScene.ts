@@ -12,6 +12,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.tilemapTiledJSON(TextureKeys.Dungeon, 'images/dungeon/dungeon-01.json')
     this.load.atlas(TextureKeys.Faune, 'images/characters/faune.png', 'images/characters/faune.json')
     this.load.atlas(TextureKeys.Lizard, 'images/enemies/lizard.png', 'images/enemies/lizard.json')
+    this.load.atlas(TextureKeys.MaskedOrc, 'images/enemies/masked-orc.png', 'images/enemies/masked-orc.json')
     this.load.atlas(TextureKeys.Chest, 'images/items/treasure.png', 'images/items/treasure.json')
     this.load.image(TextureKeys.FullHeart, 'images/ui/ui_heart_full.png')
     this.load.image(TextureKeys.EmptyHeart, 'images/ui/ui_heart_empty.png')

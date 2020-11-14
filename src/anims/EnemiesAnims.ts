@@ -16,6 +16,18 @@ const createEnemiesAnims = (anims: Phaser.Animations.AnimationManager) => {
     repeat: -1,
     frameRate: 10
   })
+
+  anims.create({
+    key: AnimsKeys.MaskedOrcIdle,
+    frames: anims.generateFrameNames(TextureKeys.MaskedOrc, {start: 0, end: 3, prefix: 'masked_orc_idle_anim_f', suffix: '.png'}),
+    repeat: -1,
+    frameRate: 10
+  })
+
+  anims.create({
+    key: AnimsKeys.MaskedOrcRun,
+    frames: anims.generateFrameNames(TextureKeys.MaskedOrc, {start: 0, end: 0, prefix: 'masked_orc_idle_anim_f', suffix: '.png' })
+  })
 }
 
 export {

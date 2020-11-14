@@ -4,20 +4,24 @@ import {createFauneAnims} from '../anims/CharacterAnims'
 import '../characters/Faune'
 import Faune from '../characters/Faune'
 import Lizard from '../enemies/Lizard'
+import MaskedOrc from '../enemies/MaskedOrc'
 import {createEnemiesAnims} from '../anims/EnemiesAnims'
 import EventKeys from '../consts/EventKeys'
 import { sceneEvents } from '../events/EventCenter'
 import SceneKeys from '../consts/SceneKeys'
 import Chest from '../items/Chest'
 import { createChestAnims } from '../anims/ChestAnims'
+import Enemies from '~/enemies/Enemies'
 
 
 export default class GameScene extends Phaser.Scene {
   private faune!: Faune
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private fauneLizardCollider!: Phaser.Physics.Arcade.Collider
+  private fauneOrcCollider!: Phaser.Physics.Arcade.Collider
   private weapons!: Phaser.Physics.Arcade.Group
   private lizards!: Phaser.Physics.Arcade.Group
+  private maskedOrcs!: Phaser.Physics.Arcade.Group
 
   constructor() {
     super(SceneKeys.game)
@@ -65,6 +69,11 @@ export default class GameScene extends Phaser.Scene {
     })
     this.lizards.get(250, 80, TextureKeys.Lizard, 'lizard_m_idle_anim_f0.png')
 
+    this.maskedOrcs = this.physics.add.group({
+      classType: MaskedOrc
+    })
+    this.maskedOrcs.get(400, 80, TextureKeys.MaskedOrc, 'masked_orc_idle_anim_f0.png')
+
     const chests = this.physics.add.staticGroup({
       classType: Chest
     })
@@ -73,10 +82,16 @@ export default class GameScene extends Phaser.Scene {
 
     this.physics.add.collider(this.faune, wallsLayer)
     this.physics.add.collider(this.lizards, wallsLayer)
+    this.physics.add.collider(this.maskedOrcs, wallsLayer)
     this.physics.add.collider(this.lizards, chests)
+    this.physics.add.collider(this.maskedOrcs, chests)
     this.physics.add.collider(this.faune.Weapon, this.lizards, this.weaponLizardCollusion, undefined, this)
+    this.physics.add.collider(this.faune.Weapon, this.maskedOrcs, this.weaponLizardCollusion, undefined, this)
+
     this.physics.add.collider(chests, this.faune, this.handlePlayerChestCollusion, undefined, this)
     this.fauneLizardCollider = this.physics.add.collider(this.faune, this.lizards, this.fauneLizardCollusion, undefined, this)
+    this.fauneOrcCollider = this.physics.add.collider(this.faune, this.maskedOrcs, this.fauneLizardCollusion, undefined, this)
+
 
     this.cursors = this.input.keyboard.createCursorKeys()
   }
@@ -93,10 +108,10 @@ export default class GameScene extends Phaser.Scene {
   }
   
   fauneLizardCollusion(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
-    const lizard = obj2 as Lizard
+    const enemy = obj2 as Enemies
 
-    const dx = this.faune.x - lizard.x
-    const dy = this.faune.y - lizard.y
+    const dx = this.faune.x - enemy.x
+    const dy = this.faune.y - enemy.y
 
     const dir = new Phaser.Math.Vector2(dx, dy).normalize().scale(200)
 
@@ -105,8 +120,13 @@ export default class GameScene extends Phaser.Scene {
     sceneEvents.emit(EventKeys.PlayerHealthChange, this.faune.Health)
 
     if(this.faune.Health <= 0) {
-      this.fauneLizardCollider.destroy()
+      this.destoryCollider() 
     }
+  }
+
+  destoryCollider() {
+    this.fauneLizardCollider.destroy()
+    this.fauneOrcCollider.destroy()
 
   }
 

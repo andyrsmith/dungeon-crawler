@@ -8,7 +8,8 @@ enum TextureKeys {
   FullHeart = 'full-heart',
   EmptyHeart = 'empty-heart',
   RedGemSword = 'red-gem-sword',
-  Chest = 'chest'
+  Chest = 'chest',
+  MaskedOrc = 'masked-orc'
 }
 
 export default TextureKeys
