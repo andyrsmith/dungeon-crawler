@@ -4,6 +4,7 @@ import GameScene from './scenes/GameScene'
 import GameUI from './scenes/GameUI'
 import PreloadScene from './scenes/PreloadScene'
 import GameOver from './scenes/GameOver'
+import TitleScene from './scenes/TitleScene'
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -13,10 +14,10 @@ const config: Phaser.Types.Core.GameConfig = {
     default: 'arcade',
     arcade: {
       gravity: { y: 0 },
-      debug: false
+      debug: true
     }
   },
-  scene: [PreloadScene, GameScene, GameUI, GameOver],
+  scene: [PreloadScene, TitleScene, GameScene, GameUI, GameOver],
   scale: {
     zoom: 2
   }

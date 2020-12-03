@@ -19,9 +19,11 @@ export default class GameScene extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private fauneLizardCollider!: Phaser.Physics.Arcade.Collider
   private fauneOrcCollider!: Phaser.Physics.Arcade.Collider
+  private maskOrcWeaponCollider!: Phaser.Physics.Arcade.Collider
   private weapons!: Phaser.Physics.Arcade.Group
   private lizards!: Phaser.Physics.Arcade.Group
   private maskedOrcs!: Phaser.Physics.Arcade.Group
+  private maskedOrc!: MaskedOrc
 
   constructor() {
     super(SceneKeys.game)
@@ -72,7 +74,7 @@ export default class GameScene extends Phaser.Scene {
     this.maskedOrcs = this.physics.add.group({
       classType: MaskedOrc
     })
-    this.maskedOrcs.get(400, 80, TextureKeys.MaskedOrc, 'masked_orc_idle_anim_f0.png')
+    this.maskedOrc = this.maskedOrcs.get(400, 80, TextureKeys.MaskedOrc, 'masked_orc_idle_anim_f0.png')
 
     const chests = this.physics.add.staticGroup({
       classType: Chest
@@ -87,7 +89,8 @@ export default class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.maskedOrcs, chests)
     this.physics.add.collider(this.faune.Weapon, this.lizards, this.weaponLizardCollusion, undefined, this)
     this.physics.add.collider(this.faune.Weapon, this.maskedOrcs, this.weaponLizardCollusion, undefined, this)
-
+    this.physics.add.collider(this.maskedOrc.Weapon, wallsLayer, this.orcKnifeWallCollusion, undefined, this)
+    this.maskOrcWeaponCollider = this.physics.add.collider(this.maskedOrc.Weapon, this.faune, this.handleKnifePlayerCollusion, undefined, this)
     this.physics.add.collider(chests, this.faune, this.handlePlayerChestCollusion, undefined, this)
     this.fauneLizardCollider = this.physics.add.collider(this.faune, this.lizards, this.fauneLizardCollusion, undefined, this)
     this.fauneOrcCollider = this.physics.add.collider(this.faune, this.maskedOrcs, this.fauneLizardCollusion, undefined, this)
@@ -100,6 +103,32 @@ export default class GameScene extends Phaser.Scene {
     if(this.faune) {
       this.faune.update(this.cursors)
     }
+  }
+
+  handleKnifePlayerCollusion(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
+    const knife = obj2 as Phaser.Physics.Arcade.Image
+
+    const dx = this.faune.x - knife.x
+    const dy = this.faune.y - knife.y
+    
+    const dir = new Phaser.Math.Vector2(dx, dy).normalize().scale(200)
+
+    this.faune.handleDamage(dir)
+    this.maskedOrc.Weapon.killAndHide(knife)
+    knife.body.enable = false
+
+    sceneEvents.emit(EventKeys.PlayerHealthChange, this.faune.Health)
+
+    if(this.faune.Health <= 0) {
+      this.maskOrcWeaponCollider.destroy()
+    }
+  }
+
+  orcKnifeWallCollusion(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
+    const knife = obj1 as Phaser.Physics.Arcade.Image
+    this.maskedOrc.Knifes.killAndHide(knife)
+    knife.body.enable = false
+    
   }
 
   handlePlayerChestCollusion(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
@@ -127,7 +156,6 @@ export default class GameScene extends Phaser.Scene {
   destoryCollider() {
     this.fauneLizardCollider.destroy()
     this.fauneOrcCollider.destroy()
-
   }
 
   weaponLizardCollusion(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {

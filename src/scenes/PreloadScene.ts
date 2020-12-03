@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
+import WebFontFile from '../utilities/webFontFile'
 
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -17,9 +18,11 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image(TextureKeys.FullHeart, 'images/ui/ui_heart_full.png')
     this.load.image(TextureKeys.EmptyHeart, 'images/ui/ui_heart_empty.png')
     this.load.image(TextureKeys.RedGemSword, 'images/items/weapon_red_gem_sword.png')
+    this.load.addFile(new WebFontFile(this.load, 'Press Start 2P'))
+    this.load.image(TextureKeys.Knife, 'images/items/weapon_knife.png')
   }
 
   create() {
-    this.scene.start(SceneKeys.game)
+    this.scene.start(SceneKeys.titleScene)
   }
 }

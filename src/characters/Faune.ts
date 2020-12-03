@@ -120,7 +120,6 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       this.play(`faune-idle-${parts[2]}`)
       this.setVelocity(0, 0)
     }
-
     if(cursors.left?.isDown || cursors.right?.isDown || cursors.down?.isDown || cursors.up?.isDown) {
       this.activeChest = undefined
     }
