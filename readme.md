@@ -2,6 +2,8 @@
 
 This is a dungeon crawler demo web game based off of Ouraracde tutorial video.  This is not intended to be a real game just an example project.
 
+Game is developed using PhaserJS, Typescript, and Tiled for building the levels.
+
 ## Setup
 
 install NPM at [npm](https://www.npmjs.com)
@@ -36,5 +38,7 @@ Kill the two enemies, and collect the coins in the chest.  Congrats you beat the
 ## Sources
 
 Faune character: [https://ansimuz.itch.io/legend-of-faune](https://ansimuz.itch.io/legend-of-faune)
+
 Dungeon tileset: [https://0x72.itch.io/dungeontileset-ii](https://0x72.itch.io/dungeontileset-ii)
+
 Ouraracde tutorial: [https://www.youtube.com/playlist?list=PLumYWZ2t7CRtgjbZK0JMoXHjebeYmT85-](https://www.youtube.com/playlist?list=PLumYWZ2t7CRtgjbZK0JMoXHjebeYmT85-)
