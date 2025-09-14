@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import TextureKeys from '~/consts/TextureKeys'
+import TextureKeys from '../consts/TextureKeys'
 import AnimsKeys from '../consts/AnimsKeys'
 import items from '../consts/ItemsKeys'
 

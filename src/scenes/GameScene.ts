@@ -11,7 +11,7 @@ import { sceneEvents } from '../events/EventCenter'
 import SceneKeys from '../consts/SceneKeys'
 import Chest from '../items/Chest'
 import { createChestAnims } from '../anims/ChestAnims'
-import Enemies from '~/enemies/Enemies'
+import Enemies from '../enemies/Enemies'
 
 
 export default class GameScene extends Phaser.Scene {

@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import TextureKeys from '../consts/TextureKeys'
-import Chest from '~/items/Chest'
+import Chest from '../items/Chest'
 import AnimsKeys from '../consts/AnimsKeys'
 import SceneKeys from '../consts/SceneKeys'
 import items from '../consts/ItemsKeys'

@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import TextureKeys from '~/consts/TextureKeys'
+import TextureKeys from '../consts/TextureKeys'
 import {sceneEvents} from '../events/EventCenter'
 import EventKeys from '../consts/EventKeys'
 import SceneKeys from '../consts/SceneKeys'
